@@ -4,6 +4,7 @@
   --radius-sm: 9px;
   --sidebar-w: 250px;
   --transition: 0.18s ease;
+  --mobile-bar-h: 63px;
 }
 
 * { box-sizing: border-box; }
@@ -124,6 +125,8 @@ button, input, select { font: inherit; color: inherit; }
 
 /* ============ Layout ============ */
 .app { display: flex; min-height: 100vh; }
+/* The browser page fills the whole area next to the sidebar, edge to edge. */
+.app.browser-mode .main { padding: 0; }
 
 .sidebar {
   width: var(--sidebar-w);
@@ -314,7 +317,7 @@ button, input, select { font: inherit; color: inherit; }
 
 /* ============ Player ============ */
 .player-view { display: none; }
-.player-view.active { display: flex; flex-direction: column; height: calc(100vh - 40px); }
+.player-view.active { display: flex; flex-direction: column; height: calc(100vh - 86px); }
 .player-bar {
   display: flex;
   align-items: center;
@@ -400,11 +403,13 @@ button, input, select { font: inherit; color: inherit; }
 /* ============ Browser ============ */
 .browser-view { display: none; }
 .browser-view.active {
-  position: fixed;
-  inset: 0;
-  z-index: 60;
+  /* Sits in the flow next to the sidebar so the sidebar never covers the page. */
   display: flex;
   flex-direction: column;
+  width: 100%;
+  height: 100vh;
+  min-height: 320px;
+  overflow: hidden;
   background: var(--bg);
 }
 .browser-frame-wrap {
@@ -620,7 +625,6 @@ button, input, select { font: inherit; color: inherit; }
   transition: border-color var(--transition);
 }
 .browser-search #browserInput:focus { border-color: var(--primary); }
-.browser-actions { display: flex; gap: 10px; justify-content: center; }
 .browser-shortcuts { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
 .browser-shortcut {
   display: flex;
@@ -659,6 +663,43 @@ button, input, select { font: inherit; color: inherit; }
   text-overflow: ellipsis;
 }
 .browser-note { color: var(--muted); font-size: 12.5px; margin: 10px 2px 0; }
+
+.browser-notice {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  right: 12px;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 12.5px;
+  padding: 9px 12px;
+  border-radius: 12px;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.3);
+}
+.browser-notice[hidden] { display: none; }
+.browser-notice-text { flex: 1; min-width: 0; }
+.browser-notice-link { color: var(--primary); text-decoration: none; white-space: nowrap; font-weight: 600; }
+.browser-notice-link:hover { text-decoration: underline; }
+.browser-notice-close {
+  flex: none;
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 14px;
+  cursor: pointer;
+  padding: 0 2px;
+  line-height: 1;
+}
+.browser-notice-close:hover { color: var(--text); }
+@media (max-width: 860px) {
+  .browser-notice { flex-wrap: wrap; }
+  .browser-notice-text { flex-basis: 100%; }
+}
 
 /* ============ Responsive ============ */
 @media (min-width: 861px) {
@@ -715,6 +756,8 @@ button, input, select { font: inherit; color: inherit; }
   .sidebar-foot { display: none; }
   .main { padding-top: 18px; }
   .grid { grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: 10px; }
+  /* The top bar of the sidebar takes up the space above the browser page. */
+  .app.browser-mode .browser-view.active { height: calc(100vh - var(--mobile-bar-h)); }
   .player-view.active { height: calc(100vh - 120px); }
   .player-frame-wrap { min-height: 320px; }
 }
